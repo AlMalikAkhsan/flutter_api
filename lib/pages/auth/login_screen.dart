@@ -1,28 +1,27 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, use_key_in_widget_constructors
-
-import 'package:flutter_api/pages/auth/register_screen.dart';
-import 'package:flutter_api/pages/home_screen.dart';
-import 'package:flutter_api/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_api/pages/auth/register_screen.dart';
+import 'package:flutter_api/pages/menu_screen.dart';
+import 'package:flutter_api/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
+  LoginScreen({super.key});
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailController = TextEditingController();
-
-  final passwordController = TextEditingController();
-
-  final AuthService authService = AuthService();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(title: Text('Login Page')),
+      body: Container(
+        color: Colors.blue,
+        padding: EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
@@ -34,22 +33,20 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                bool success = await authService.login(
-                  emailController.text,
-                  passwordController.text,
+                bool success = await _authService.login(
+                  password: passwordController.text,
+                  email: emailController.text,
                 );
-
-                if (success) {
+                if (success && context.mounted) {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                    MaterialPageRoute(builder: (_) => MenuScreen()),
                   );
-                } else {
+                } else if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Login failed')),
+                    SnackBar(content: Text('Login Gagal')),
                   );
                 }
               },
@@ -59,10 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  MaterialPageRoute(builder: (_) => RegisterScreen()),
                 );
               },
-              child: Text('Don\'t have an account? Register'),
+              child: Text('Belum punya akun? Daftar di sini'),
             ),
           ],
         ),
